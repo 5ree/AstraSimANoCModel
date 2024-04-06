@@ -24,3 +24,4 @@ build/
 # Cython
 bridge/*.cpp
 *.so
+*.egg-info
