@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 #include "congestion_aware/Device.h"
 #include "congestion_aware/Link.h"
 #include <cassert>
+#include <iostream>
 
 using namespace NetworkAnalyticalCongestionAware;
 
@@ -30,8 +31,8 @@ void Chunk::chunk_arrived_next_device(void* const chunk_ptr) noexcept {
     }
 }
 
-Chunk::Chunk(const ChunkSize chunk_size, Route route, const Callback callback, const CallbackArg callback_arg) noexcept
-    : chunk_size(chunk_size), route(std::move(route)), callback(callback), callback_arg(callback_arg) {
+Chunk::Chunk(const ChunkSize chunk_size, Route route, const Callback callback, const CallbackArg callback_arg, DeviceId SrcID, DeviceId DstId) noexcept
+    : chunk_size(chunk_size), route(std::move(route)), callback(callback), callback_arg(callback_arg), SrcID(SrcID), DstId(DstId) {
     assert(chunk_size > 0);
     assert(!this->route.empty());
     assert(callback != nullptr);
@@ -79,5 +80,12 @@ ChunkSize Chunk::get_size() const noexcept {
 
 void Chunk::invoke_callback() noexcept {
     // invoke callback
-    (*callback)(callback_arg);
+    (*callback)(this);
+}
+
+EventTime Chunk::get_chunk_latency() const noexcept {
+    auto* const event_queue = static_cast<EventQueue*>(callback_arg);
+    const auto current_time = event_queue->get_current_time();
+    std::cout << "Src: " << this->SrcID << " Dst: " << this->DstId << " Chunk arrived at destination at time: " << current_time << " ns" << std::endl;
+    return current_time;
 }

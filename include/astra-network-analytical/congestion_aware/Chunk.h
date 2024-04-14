@@ -35,8 +35,10 @@ namespace NetworkAnalyticalCongestionAware {
    * @param route: route of the chunk from its source to destination
    * @param callback: callback to be invoked when the chunk arrives destination
    * @param callback_arg: argument of the callback
+   * @param SrcID DeviceId
+   * @param DstId DeviceId
    */
-        Chunk(ChunkSize chunk_size, Route route, Callback callback, CallbackArg callback_arg) noexcept;
+        Chunk(ChunkSize chunk_size, Route route, Callback callback, CallbackArg callback_arg,DeviceId SrcID,DeviceId DstId) noexcept;
 
         /**
    * Get the current sitting device of the chunk
@@ -78,6 +80,15 @@ namespace NetworkAnalyticalCongestionAware {
    * i.e., this method should be called when the chunk arrives its destination.
    */
         void invoke_callback() noexcept;
+                /**
+   * Calculate chunk latency
+   *
+   * @return latency of the chunk
+   */
+        [[nodiscard]] EventTime get_chunk_latency() const noexcept;
+     public : 
+          DeviceId SrcID;
+          DeviceId DstId;
 
     private:
         /// size of the chunk
@@ -94,6 +105,8 @@ namespace NetworkAnalyticalCongestionAware {
 
         /// argument of the callback
         CallbackArg callback_arg;
+        ///
+
     };
 
 }  // namespace NetworkAnalyticalCongestionAware

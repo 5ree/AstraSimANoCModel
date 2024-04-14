@@ -12,13 +12,12 @@ LICENSE file in the root directory of this source tree.
 using namespace NetworkAnalytical;
 using namespace NetworkAnalyticalCongestionAware;
 
-void chunk_arrived_callback(void* const event_queue_ptr) {
-    // typecast event_queue_ptr
-    auto* const event_queue = static_cast<EventQueue*>(event_queue_ptr);
-
-    // print chunk arrival time
-    const auto current_time = event_queue->get_current_time();
-    std::cout << "A chunk arrived at destination at time: " << current_time << " ns" << std::endl;
+EventTime communication_start = 0;
+void chunk_arrived_callback(void* const chunk_ptr) {
+    auto* const chnkPtr = static_cast<Chunk*>(chunk_ptr);
+    auto latency = chnkPtr->get_chunk_latency();
+    latency = latency - communication_start;
+    std::cout << "Src: " << chnkPtr->SrcID << " Dst: " << chnkPtr->DstId << " Latency: " << latency << " ns" << std::endl;
 }
 
 int main() {
@@ -41,17 +40,18 @@ int main() {
             if (i == j) {
                 continue;
             }
-
             // crate a chunk
             auto route = topology->route(i, j);
+            std::cout << "Scheduling chunk for Src: " << i << " Dst " << j << std::endl;
             auto* event_queue_ptr = static_cast<void*>(event_queue.get());
-            auto chunk = std::make_unique<Chunk>(chunk_size, route, chunk_arrived_callback, event_queue_ptr);
+            auto chunk = std::make_unique<Chunk>(chunk_size, route, chunk_arrived_callback, event_queue_ptr,i,j);
 
             // send a chunk
             topology->send(std::move(chunk));
         }
     }
-
+    communication_start = event_queue->get_current_time();
+    std::cout << "Communication Start time is : " << communication_start << " ns"<< std::endl;
     // Run simulation
     while (!event_queue->finished()) {
         event_queue->proceed();
