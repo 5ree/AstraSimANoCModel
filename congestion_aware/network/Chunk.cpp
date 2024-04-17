@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 #include "congestion_aware/Device.h"
 #include "congestion_aware/Link.h"
 #include "common/Logger.h"
+#include "common/Tracker.h"
 #include <cassert>
 #include <iostream>
 
@@ -32,8 +33,9 @@ void Chunk::chunk_arrived_next_device(void* const chunk_ptr) noexcept {
     }
 }
 
-Chunk::Chunk(const ChunkSize chunk_size, Route route, const Callback callback, const CallbackArg callback_arg, DeviceId SrcID, DeviceId DstId) noexcept
-    : chunk_size(chunk_size), route(std::move(route)), callback(callback), callback_arg(callback_arg), SrcID(SrcID), DstId(DstId) {
+Chunk::Chunk(const size_t tracker_id, const ChunkSize chunk_size, Route route, const Callback callback, const CallbackArg callback_arg, DeviceId SrcID, DeviceId DstId) noexcept
+    : tracker_id(tracker_id), chunk_size(chunk_size), route(std::move(route)), callback(callback), callback_arg(callback_arg), SrcID(SrcID), DstId(DstId) {
+    assert(tracker_id >= 0);
     assert(chunk_size > 0);
     assert(!this->route.empty());
     assert(callback != nullptr);
@@ -91,6 +93,10 @@ EventTime Chunk::get_chunk_latency() const noexcept {
     std::stringstream ss;
     ss << "Src: " << this->SrcID << " Dst: " << this->DstId << " Chunk arrived at destination at time: " << current_time << " ns";
     INFO(ss.str());
+
+    // FIXME:
+    //  - This isn't latency, just for debug for now!
+    Tracker::update(tracker_id, current_time);
 
     return current_time;
 }

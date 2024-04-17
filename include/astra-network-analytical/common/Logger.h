@@ -14,13 +14,13 @@ namespace NetworkAnalytical
     enum class LOGLEVEL {
         DEBUG,
         INFO,
-        NONE
+        WARNING
     };
 
     class Logger
     {
         public:
-        static const LOGLEVEL currentLevel = LOGLEVEL::DEBUG;
+        static const LOGLEVEL currentLevel = LOGLEVEL::WARNING;
 
         static void log(LOGLEVEL level, const std::string& message, const char* functionName); 
     };

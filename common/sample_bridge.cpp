@@ -4,6 +4,7 @@
 #include "congestion_aware/Chunk.h"
 #include "congestion_aware/Helper.h"
 #include "common/Logger.h"
+#include "common/Tracker.h"
 
 #include <iostream>
 #include <sstream>
@@ -46,7 +47,7 @@ void noc_setup(const std::string filePath)
     DEBUG(ss.str());
 }
 
-void add_to_EQ (int SrcID, int DstId, int size)
+int add_to_EQ (int SrcID, int DstId, int size)
 {
     std::stringstream ss;
 
@@ -60,19 +61,23 @@ void add_to_EQ (int SrcID, int DstId, int size)
     ss << "Scheduling chunk for Src: " << SrcID << " Dst " << DstId;
     INFO(ss.str());
 
+    size_t curr_t_id = Tracker::create();
+
     auto route = topology->route(SrcID, DstId);
     auto* event_queue_ptr = static_cast<void*>(event_queue.get());
-    auto chunk = std::make_unique<Chunk>(chunk_size, route, chunk_arrived_callback, event_queue_ptr,SrcID,DstId);
+    auto chunk = std::make_unique<Chunk>(curr_t_id, chunk_size, route, chunk_arrived_callback, event_queue_ptr, SrcID, DstId);
 
     // send a chunk
     topology->send(std::move(chunk));
 
     ss.str(""); ss.clear();
-    ss << "Done with add_to_EQ";
+    ss << "Done with add_to_EQ(). Returning tracking id " << curr_t_id;
     DEBUG(ss.str());
+
+    return curr_t_id;
 }
 
-void simulate_events ()
+void simulate_events()
 {
     std::stringstream ss;
     
@@ -88,6 +93,11 @@ void simulate_events ()
     ss.str(""); ss.clear();
     ss << "Done with simulate_event";
     DEBUG(ss.str());
+}
+
+int get_latency(size_t t_id)
+{
+    return Tracker::lookup(t_id);
 }
 
 void sample_bridge_sanity()

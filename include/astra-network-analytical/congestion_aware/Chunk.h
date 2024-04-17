@@ -38,7 +38,7 @@ namespace NetworkAnalyticalCongestionAware {
    * @param SrcID DeviceId
    * @param DstId DeviceId
    */
-        Chunk(ChunkSize chunk_size, Route route, Callback callback, CallbackArg callback_arg,DeviceId SrcID,DeviceId DstId) noexcept;
+        Chunk(size_t tracker_id, ChunkSize chunk_size, Route route, Callback callback, CallbackArg callback_arg,DeviceId SrcID,DeviceId DstId) noexcept;
 
         /**
    * Get the current sitting device of the chunk
@@ -91,6 +91,9 @@ namespace NetworkAnalyticalCongestionAware {
           DeviceId DstId;
 
     private:
+        /// tracker id of the chunk        
+        size_t tracker_id;
+
         /// size of the chunk
         ChunkSize chunk_size;
 

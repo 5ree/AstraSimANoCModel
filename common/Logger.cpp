@@ -19,6 +19,9 @@ void Logger::log(LOGLEVEL level, const std::string& message, const char* functio
             case LOGLEVEL::DEBUG:
                 prefix = "DEBUG";
                 break;
+            case LOGLEVEL::WARNING:
+                prefix = "WARNING";
+                break;
             default:
                 prefix = "UNKNOWN";
                 break;
