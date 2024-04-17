@@ -6,6 +6,7 @@ LICENSE file in the root directory of this source tree.
 #include "congestion_aware/Chunk.h"
 #include "congestion_aware/Device.h"
 #include "congestion_aware/Link.h"
+#include "common/Logger.h"
 #include <cassert>
 #include <iostream>
 
@@ -86,6 +87,10 @@ void Chunk::invoke_callback() noexcept {
 EventTime Chunk::get_chunk_latency() const noexcept {
     auto* const event_queue = static_cast<EventQueue*>(callback_arg);
     const auto current_time = event_queue->get_current_time();
-    std::cout << "Src: " << this->SrcID << " Dst: " << this->DstId << " Chunk arrived at destination at time: " << current_time << " ns" << std::endl;
+
+    std::stringstream ss;
+    ss << "Src: " << this->SrcID << " Dst: " << this->DstId << " Chunk arrived at destination at time: " << current_time << " ns";
+    INFO(ss.str());
+
     return current_time;
 }
