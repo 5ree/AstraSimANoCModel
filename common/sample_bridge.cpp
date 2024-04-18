@@ -17,6 +17,17 @@ std::shared_ptr<EventQueue> event_queue ;
 std::shared_ptr<Topology> topology;
 EventTime communication_start = 0;
 
+void schedule_chunk(void* arg)
+{
+    const auto current_time = event_queue->get_current_time();
+    std::stringstream ss;
+    ss << "Schedule chunk at time: " << current_time << " ns";
+    INFO(ss.str());
+
+    auto chunk = std::unique_ptr<Chunk>(static_cast<Chunk*>(arg));
+    topology->send(std::move(chunk));
+}
+
 void chunk_arrived_callback(void* const chunk_ptr)
 {
     auto* const chnkPtr = static_cast<Chunk*>(chunk_ptr);
@@ -47,7 +58,7 @@ void noc_setup(const std::string filePath)
     DEBUG(ss.str());
 }
 
-int add_to_EQ (int SrcID, int DstId, int size)
+int add_to_EQ(int clk, int SrcID, int DstId, int size)
 {
     std::stringstream ss;
 
@@ -58,7 +69,7 @@ int add_to_EQ (int SrcID, int DstId, int size)
     const auto npus_count = topology->get_npus_count();
 
     // crate a chunk
-    ss << "Scheduling chunk for Src: " << SrcID << " Dst " << DstId;
+    ss << "Scheduling chunk at time " << clk <<  " for Src: " << SrcID << " Dst " << DstId;
     INFO(ss.str());
 
     size_t curr_t_id = Tracker::create();
@@ -68,7 +79,9 @@ int add_to_EQ (int SrcID, int DstId, int size)
     auto chunk = std::make_unique<Chunk>(curr_t_id, chunk_size, route, chunk_arrived_callback, event_queue_ptr, SrcID, DstId);
 
     // send a chunk
-    topology->send(std::move(chunk));
+    CallbackArg raw_chunk_ptr = chunk.release();
+    EventTime send_time = clk;
+    event_queue->schedule_event(send_time, schedule_chunk, raw_chunk_ptr);
 
     ss.str(""); ss.clear();
     ss << "Done with add_to_EQ(). Returning tracking id " << curr_t_id;
