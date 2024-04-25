@@ -119,3 +119,11 @@ void sample_bridge_sanity()
     ss << "Sanity print from the ANOC Cython binding";
     INFO(ss.str());
 }
+
+int get_static_latency(int src, int dest, int size)
+{
+    auto route = topology->route(src, dest);
+    auto num_hops = route.size() - 1;
+
+    return topology->get_static_latency(num_hops, size);
+}

@@ -9,12 +9,14 @@ root_dir = "."
 # List to collect all matching .cpp files
 cpp_sources = []
 
+
 # Function to determine if a directory should be skipped
 def should_skip_dir(dir_path):
     # Define directories to skip (add more as needed)
-    skip_dirs = ["extern","test","bridge","build"]
+    skip_dirs = ["extern", "test", "bridge", "build"]
     # Check if the directory name matches any of the skip directories
     return any(skip_dir in dir_path for skip_dir in skip_dirs)
+
 
 # Recursively traverse the directory tree starting from root_dir
 for root, dirs, files in os.walk(root_dir):
@@ -29,7 +31,9 @@ for root, dirs, files in os.walk(root_dir):
 
 # Remove files from cpp_sources based on filename pattern
 unwanted_files = ["example.cpp"]
-cpp_sources = [file for file in cpp_sources if os.path.basename(file) not in unwanted_files]
+cpp_sources = [
+    file for file in cpp_sources if os.path.basename(file) not in unwanted_files
+]
 
 # Print the cpp_sources list
 print("List of matched .cpp files:")
@@ -48,5 +52,7 @@ sample_extension = Extension(
 setup(
     name="astrasim_anoc_cython_wrapper",
     version="0.1",
-    ext_modules=cythonize([sample_extension]),
+    ext_modules=cythonize(
+        [sample_extension],
+    ),
 )

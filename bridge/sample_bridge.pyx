@@ -10,6 +10,7 @@ cdef extern from "common/sample_bridge.h":
     int add_to_EQ(int clk, int SrcID, int DstId, int size)
     void simulate_events()
     int get_latency(int t_id) 
+    int get_static_latency(int src, int dest, int size);
 
 def py_noc_setup(filepath):
     noc_setup(filepath)
@@ -27,3 +28,7 @@ def py_simulate_events ():
 def py_get_latency(t_id):
     lat = get_latency(t_id)
     return lat
+
+def py_get_static_latency(src, dest, size):
+    stat_lat = get_static_latency(src, dest, size)
+    return stat_lat

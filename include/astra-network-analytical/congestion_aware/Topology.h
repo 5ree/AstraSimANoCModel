@@ -90,6 +90,9 @@ namespace NetworkAnalyticalCongestionAware {
    */
         [[nodiscard]] std::vector<Bandwidth> get_bandwidth_per_dim() const noexcept;
 
+        [[nodiscard]] virtual int get_static_latency(const int num_hops,
+                                                     const int size) const noexcept;
+
     protected:
         /// number of total devices in the topology
         /// device includes non-NPU devices such as switches

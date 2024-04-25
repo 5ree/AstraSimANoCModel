@@ -92,3 +92,10 @@ void Topology::instantiate_devices() noexcept {
         devices.push_back(std::make_shared<Device>(i));
     }
 }
+
+int
+Topology::get_static_latency(const int num_hops,
+                                  const int size) const noexcept
+{
+    return 0;
+}

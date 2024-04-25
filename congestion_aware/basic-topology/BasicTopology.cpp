@@ -37,3 +37,14 @@ TopologyBuildingBlock BasicTopology::get_basic_topology_type() const noexcept {
 
     return basic_topology_type;
 }
+
+int
+BasicTopology::get_static_latency(const int num_hops,
+                                  const int size) const noexcept
+{
+
+    auto link_delay = num_hops * latency;
+    auto serialization_delay = static_cast<double>(size) / bandwidth;
+
+    return static_cast<int>(link_delay + serialization_delay);
+}

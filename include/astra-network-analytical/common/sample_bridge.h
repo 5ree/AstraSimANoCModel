@@ -8,3 +8,4 @@ int add_to_EQ(int clk, int SrcID, int DstId, int size);
 void simulate_events();
 int get_latency(size_t t_id);
 void schedule_chunk(void* arg);
+int get_static_latency(int src, int dest, int size);

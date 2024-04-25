@@ -42,6 +42,9 @@ namespace NetworkAnalyticalCongestionAware {
    */
         [[nodiscard]] TopologyBuildingBlock get_basic_topology_type() const noexcept;
 
+        [[nodiscard]] virtual int get_static_latency(const int num_hops,
+                                                     const int size) const noexcept;
+
     protected:
         /// bandwidth of each link
         Bandwidth bandwidth;
