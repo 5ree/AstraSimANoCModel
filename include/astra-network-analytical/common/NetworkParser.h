@@ -37,6 +37,8 @@ namespace NetworkAnalytical {
    * @return number of NPUs per each demension.
    */
         [[nodiscard]] std::vector<int> get_npus_counts_per_dim() const noexcept;
+        [[nodiscard]] std::vector<int> get_cols_per_dim() const noexcept;
+        [[nodiscard]] std::vector<int> get_rows_per_dim() const noexcept;
 
         /**
    * Read "bandwidth" value
@@ -66,6 +68,8 @@ namespace NetworkAnalytical {
 
         /// NPUs count per each dimension
         std::vector<int> npus_count_per_dim;
+        std::vector<int> rows_per_dim;
+        std::vector<int> cols_per_dim;
 
         /// bandwidth per each dimension
         std::vector<Bandwidth> bandwidth_per_dim;

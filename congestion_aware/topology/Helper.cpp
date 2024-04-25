@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 #include "congestion_aware/FullyConnected.h"
 #include "congestion_aware/Ring.h"
 #include "congestion_aware/Switch.h"
+#include "congestion_aware/Mesh.h"
 #include <cstdlib>
 #include <iostream>
 
@@ -21,6 +22,8 @@ NetworkAnalyticalCongestionAware::construct_topology(const NetworkParser& networ
     const auto npus_counts_per_dim = network_parser.get_npus_counts_per_dim();
     const auto bandwidths_per_dim = network_parser.get_bandwidths_per_dim();
     const auto latencies_per_dim = network_parser.get_latencies_per_dim();
+    const auto rows_per_dim = network_parser.get_rows_per_dim();
+    const auto cols_per_dim = network_parser.get_cols_per_dim();
 
     // for now, congestion_aware backend supports 1-dim topology only
     if (dims_count != 1) {
@@ -33,6 +36,8 @@ NetworkAnalyticalCongestionAware::construct_topology(const NetworkParser& networ
     const auto npus_count = npus_counts_per_dim[0];
     const auto bandwidth = bandwidths_per_dim[0];
     const auto latency = latencies_per_dim[0];
+    const auto rows = rows_per_dim[0];
+    const auto cols = cols_per_dim[0];
 
     switch (topology_type) {
     case TopologyBuildingBlock::Ring:
@@ -41,6 +46,8 @@ NetworkAnalyticalCongestionAware::construct_topology(const NetworkParser& networ
         return std::make_shared<Switch>(npus_count, bandwidth, latency);
     case TopologyBuildingBlock::FullyConnected:
         return std::make_shared<FullyConnected>(npus_count, bandwidth, latency);
+    case TopologyBuildingBlock::Mesh:
+        return std::make_shared<Mesh>(rows,cols, bandwidth, latency);
     default:
         // shouldn't reaach here
         std::cerr << "[Error] (network/analytical/congestion_aware) " << "not supported basic-topology" << std::endl;

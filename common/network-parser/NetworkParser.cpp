@@ -15,6 +15,8 @@ NetworkParser::NetworkParser(const std::string& path) noexcept : dims_count(-1) 
     bandwidth_per_dim = {};
     latency_per_dim = {};
     topology_per_dim = {};
+    rows_per_dim = {};
+    cols_per_dim = {};
 
     try {
         // load network config file
@@ -40,6 +42,20 @@ std::vector<int> NetworkParser::get_npus_counts_per_dim() const noexcept {
     assert(npus_count_per_dim.size() == dims_count);
 
     return npus_count_per_dim;
+}
+
+std::vector<int> NetworkParser::get_rows_per_dim() const noexcept {
+    assert(dims_count > 0);
+    assert(rows_per_dim.size() == dims_count);
+
+    return rows_per_dim;
+}
+
+std::vector<int> NetworkParser::get_cols_per_dim() const noexcept {
+    assert(dims_count > 0);
+    assert(cols_per_dim.size() == dims_count);
+
+    return cols_per_dim;
 }
 
 std::vector<Bandwidth> NetworkParser::get_bandwidths_per_dim() const noexcept {
@@ -78,6 +94,8 @@ void NetworkParser::parse_network_config_yml(const YAML::Node& network_config) n
     npus_count_per_dim = parse_vector<int>(network_config["npus_count"]);
     bandwidth_per_dim = parse_vector<Bandwidth>(network_config["bandwidth"]);
     latency_per_dim = parse_vector<Latency>(network_config["latency"]);
+    rows_per_dim = parse_vector<int>(network_config["rows"]);
+    cols_per_dim = parse_vector<int>(network_config["cols"]);
 
     // check the validity of the parsed network config
     check_validity();
@@ -96,6 +114,10 @@ TopologyBuildingBlock NetworkParser::parse_topology_name(const std::string& topo
 
     if (topology_name == "Switch") {
         return TopologyBuildingBlock::Switch;
+    }
+
+    if (topology_name == "Mesh") {
+        return TopologyBuildingBlock::Mesh;
     }
 
     // shouldn't reach here
