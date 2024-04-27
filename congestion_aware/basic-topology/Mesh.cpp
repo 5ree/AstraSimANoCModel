@@ -5,6 +5,7 @@ LICENSE file in the root directory of this source tree.
 
 #include "congestion_aware/Mesh.h"
 #include <cassert>
+#include <iostream>
 
 using namespace NetworkAnalyticalCongestionAware;
 
@@ -22,7 +23,7 @@ Mesh::Mesh(const int rows, const int cols, const Bandwidth bandwidth, const Late
     int dest;
     // connect npus in a Mesh
     // connect only right and bottom neighbour to avoid duplicate connections.
-    for (auto i = 0; i < rows - 1; i++) {
+    for (auto i = 0; i < rows ; i++) {
         for (auto j=0 ; j < cols ; j++){
             src = i*(cols) + j;
             //connect to right neighbor if exists
