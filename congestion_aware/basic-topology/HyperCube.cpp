@@ -4,6 +4,8 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include "congestion_aware/HyperCube.h"
+#include "common/Logger.h"
+
 #include <cassert>
 #include <cmath>
 #include <iostream>
@@ -24,12 +26,21 @@ HyperCube::HyperCube(const int npus_count, const Bandwidth bandwidth, const Late
         std::cerr << "Error: npus_count must be a power of 2." << std::endl;
     }
 
+    std::stringstream ss;
+    ss << "HyperCube being constructed with dims = " << dimensions << ", npus_count = " << npus_count << ", bandwidth = " << bandwidth << ", latency = " << latency; 
+    DEBUG(ss.str());
+
     // Set up connections for a hypercube topology
     for (int src = 0; src < npus_count; src++) {
         for (int i = 0; i < dimensions; i++) {
             int dest = src ^ (1 << i); // Flip the i-th bit of src to find its neighbor
             if (src < dest) { // This check ensures that each connection is set up only once
-                connect(src, dest, bandwidth, latency, false);
+
+                ss.str(""); ss.clear();
+                ss << "Connecting NPU " << src << " to NPU " << dest << " with bandwidth = " << bandwidth << " and latency = " << latency;
+                DEBUG(ss.str());
+
+                connect(src, dest, bandwidth, latency, true);
             }
         }
     }
@@ -42,6 +53,7 @@ Route HyperCube::route(const DeviceId src, const DeviceId dest) const noexcept {
 
     // construct route
     auto route = Route();
+    route.push_back(devices[src]);
 
     // Calculate the difference using bitwise XOR
     DeviceId current = src;
@@ -58,6 +70,13 @@ Route HyperCube::route(const DeviceId src, const DeviceId dest) const noexcept {
             route.push_back(devices[current]);
         }
     }
+
+    std::stringstream ss;
+    ss << "Route from NPU " << src << " to NPU " << dest << " is: \n";
+    for (const auto& device : route) {
+        ss << device->get_id() << " -> ";
+    }
+    DEBUG(ss.str());
 
     return route;
 }
