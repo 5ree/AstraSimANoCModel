@@ -31,6 +31,6 @@ namespace NetworkAnalytical {
     using EventTime = uint64_t;
 
     /// Basic multi-dimensional topology building blocks
-    enum class TopologyBuildingBlock { Undefined, Ring, FullyConnected, Switch, HyperCube, Mesh };
+    enum class TopologyBuildingBlock { Undefined, Ring, FullyConnected, Switch, HyperCube, Mesh, Bus };
 
 }  // namespace NetworkAnalytical

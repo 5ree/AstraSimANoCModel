@@ -51,6 +51,8 @@ namespace NetworkAnalyticalCongestionAware {
    */
         void connect(DeviceId id, Bandwidth bandwidth, Latency latency) noexcept;
 
+        void map_link(DeviceId id, std::shared_ptr<Link> link) noexcept;
+
     private:
         /// device Id
         DeviceId device_id;

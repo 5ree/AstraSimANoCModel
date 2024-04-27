@@ -60,3 +60,16 @@ bool Device::connected(const DeviceId dest) const noexcept {
     // check whether the connection exists
     return links.find(dest) != links.end();
 }
+
+void
+Device::map_link(DeviceId id, std::shared_ptr<Link> link) noexcept
+{
+    assert(id >= 0);
+    assert(link != nullptr);
+
+    // assert there's no existing connection
+    assert(!connected(id));
+
+    // map the link
+    links[id] = std::move(link);
+}

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 #include "congestion_aware/Switch.h"
 #include "congestion_aware/Mesh.h"
 #include "congestion_aware/HyperCube.h"
+#include "congestion_aware/Bus.h"
 #include <cstdlib>
 #include <iostream>
 
@@ -51,6 +52,8 @@ NetworkAnalyticalCongestionAware::construct_topology(const NetworkParser& networ
         return std::make_shared<Mesh>(rows,cols, bandwidth, latency);
     case TopologyBuildingBlock::HyperCube:
         return std::make_shared<HyperCube>(npus_count, bandwidth, latency);
+    case TopologyBuildingBlock::Bus:
+        return std::make_shared<Bus>(npus_count, bandwidth, latency);
     default:
         // shouldn't reaach here
         std::cerr << "[Error] (network/analytical/congestion_aware) " << "not supported basic-topology" << std::endl;
